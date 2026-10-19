@@ -1,5 +1,7 @@
 # TDK Ecommerce Example (Vue + Hono)
 
+[![Uses TDK CLI](https://img.shields.io/badge/Uses-TDK%20CLI-blue?style=flat-square&logo=github)](https://github.com/tdk-landscape/tdk-cli-core)
+
 A small, complete [TDK](https://github.com/tdk-landscape/tdk-cli-core) project: a **Vue 3** storefront and a **Hono** catalog API, two resources of one `store` stack. It is the smallest example of opting into the Vue provider with `tdk resource --framework vue`.
 
 `storefront-web` (Vue + Vite + TypeScript) shows a product grid with search, a cart, and checkout. `catalog-api` (Hono on Bun, in-memory) serves products and creates orders, pricing them in integer cents and refusing to oversell. No database is needed.
