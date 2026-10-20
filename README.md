@@ -20,6 +20,9 @@ Sold-out items (Brew Scale) can't be added, and checkout empties the cart. On a 
 
 ## Run it
 
+
+> **Repository-pinned CLI (optional):** Run `bun install` from the repository root to install the version pinned in `package.json`. Use `bun run tdk:project` to initialize project config, `bun run tdk:dry-run` to preview startup, or `bun run tdk:up -- <stack>` to start a stack. The global npm and standalone binary installation paths remain available.
+
 Prerequisites: Docker running, [Tilt](https://docs.tilt.dev/install.html), [Bun](https://bun.sh/docs/installation) and the [TDK CLI](https://github.com/tdk-landscape/tdk-cli-core#installation).
 
 ```bash
