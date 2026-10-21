@@ -1,12 +1,12 @@
 # TDK Ecommerce Example (Vue + Hono)
 
-[![Uses TDK CLI](https://img.shields.io/badge/Uses-TDK%20CLI-blue?style=flat-square&logo=github)](https://github.com/tdk-landscape/tdk-cli-core)
+[![Uses TDK CLI](https://img.shields.io/badge/Uses-TDK%20CLI-blue?style=flat-square&logo=github)](https://github.com/flisk-sh/flisk)
 
-A small, complete [TDK](https://github.com/tdk-landscape/tdk-cli-core) project: a **Vue 3** storefront and a **Hono** catalog API, two resources of one `store` stack. It is the smallest example of opting into the Vue provider with `tdk resource --framework vue`.
+A small, complete [TDK](https://github.com/flisk-sh/flisk) project: a **Vue 3** storefront and a **Hono** catalog API, two resources of one `store` stack. It is the smallest example of opting into the Vue provider with `tdk resource --framework vue`.
 
 `storefront-web` (Vue + Vite + TypeScript) shows a product grid with search, a cart, and checkout. `catalog-api` (Hono on Bun, in-memory) serves products and creates orders, pricing them in integer cents and refusing to oversell. No database is needed.
 
-> **Requires TDK CLI 1.3.75 or newer** ([tdk-cli-core#149](https://github.com/tdk-landscape/tdk-cli-core/pull/149) added Vue support). Older releases ignore `"framework": "vue"` and would generate React config for these files. Check with `tdk resource --help | grep -- --framework`.
+> **Requires TDK CLI 1.3.75 or newer** ([tdk-cli-core#149](https://github.com/flisk-sh/flisk/pull/149) added Vue support). Older releases ignore `"framework": "vue"` and would generate React config for these files. Check with `tdk resource --help | grep -- --framework`.
 
 ## What it looks like
 
@@ -23,10 +23,10 @@ Sold-out items (Brew Scale) can't be added, and checkout empties the cart. On a 
 
 > **Repository-pinned CLI (optional):** Run `bun install` from the repository root to install the version pinned in `package.json`. Use `bun run tdk:project` to initialize project config, `bun run tdk:dry-run` to preview startup, or `bun run tdk:up -- <stack>` to start a stack. The global npm and standalone binary installation paths remain available.
 
-Prerequisites: Docker running, [Tilt](https://docs.tilt.dev/install.html), [Bun](https://bun.sh/docs/installation) and the [TDK CLI](https://github.com/tdk-landscape/tdk-cli-core#installation).
+Prerequisites: Docker running, [Tilt](https://docs.tilt.dev/install.html), [Bun](https://bun.sh/docs/installation) and the [TDK CLI](https://github.com/flisk-sh/flisk#installation).
 
 ```bash
-git clone https://github.com/tdk-landscape/tdk-ecommerce-example.git
+git clone https://github.com/flisk-sh/tdk-ecommerce-example.git
 cd tdk-ecommerce-example
 tdk up store
 ```
