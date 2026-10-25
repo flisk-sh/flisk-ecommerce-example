@@ -1,5 +1,15 @@
-import { describe, expect, it } from 'vitest';
-import { app } from '../src/index';
+import { SQL } from 'bun';
+import { afterAll, beforeEach, describe, expect, it } from 'bun:test';
+import { createApp } from '../src/app';
+import { cleanDatabaseUrl } from '../src/db';
+// The migrator owns the schema and the seed. Run it once against the test database first (see README).
+import { SEED_PRODUCTS } from '../../catalog-api-migrator/src/seed';
+
+const url = process.env.DATABASE_URL;
+if (!url) throw new Error('Set DATABASE_URL to a Postgres database (flisk up starts one) to run the catalog tests.');
+
+const sql = new SQL(cleanDatabaseUrl(url));
+const app = createApp(sql);
 
 const post = (path: string, body: unknown) =>
   app.request(path, {
@@ -10,6 +20,18 @@ const post = (path: string, body: unknown) =>
 
 const stockOf = async (id: string) =>
   (await (await app.request(`/api/products/${id}`)).json()).data.stock as number;
+
+// Each test starts from the seed: no orders, seed stock.
+beforeEach(async () => {
+  await sql`truncate order_lines, orders restart identity`;
+  for (const p of SEED_PRODUCTS) {
+    await sql`update products set stock = ${p.stock} where id = ${p.id}`;
+  }
+});
+
+afterAll(async () => {
+  await sql.close();
+});
 
 describe('catalog-api', () => {
   it('reports health', async () => {
@@ -39,8 +61,17 @@ describe('catalog-api', () => {
     });
 
     expect(res.status).toBe(201);
-    expect((await res.json()).data.totalCents).toBe(2 * 1800 + 900);
+    const { data } = await res.json();
+    expect(data.totalCents).toBe(2 * 1800 + 900);
+    expect(data.id).toMatch(/^o_\d+$/);
     expect(await stockOf('p_mug')).toBe(before - 2);
+  });
+
+  it('keeps the order after it is placed', async () => {
+    const res = await post('/api/orders', { lines: [{ productId: 'p_kettle', quantity: 1 }] });
+    const { data } = await res.json();
+    const rows = await sql`select name, quantity, unit_price_cents from order_lines where order_id = ${Number(data.id.slice(2))}`;
+    expect(rows).toEqual([{ name: 'Gooseneck Kettle', quantity: 1, unit_price_cents: 6500 }]);
   });
 
   it('rejects an order that exceeds stock without taking any stock', async () => {
