@@ -1,0 +1,10 @@
+// Prisma owns the migrations (prisma/migrations), applied by `prisma migrate deploy` at startup.
+// The tables carry no Prisma models: catalog-api queries them with Bun's SQL client, as the Flisk Board does.
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}

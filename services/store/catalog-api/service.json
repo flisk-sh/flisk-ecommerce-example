@@ -3,7 +3,12 @@
   "appType": "backend",
   "stack": "store",
   "port": 4300,
-  "dependsOn": [],
+  "featuresEnabled": [
+    "prisma"
+  ],
+  "dependsOn": [
+    "catalog-api-migrator"
+  ],
   "healthCheckPath": "/health",
   "schemaVersion": 1
 }

@@ -4,7 +4,7 @@
 
 A small, complete [TDK](https://github.com/flisk-sh/flisk) project: a **Vue 3** storefront and a **Hono** catalog API, two resources of one `store` stack. It is the smallest example of opting into the Vue provider with `tdk resource --framework vue`.
 
-`storefront-web` (Vue + Vite + TypeScript) shows a product grid with search, a cart, and checkout. `catalog-api` (Hono on Bun, in-memory) serves products and creates orders, pricing them in integer cents and refusing to oversell. No database is needed.
+`storefront-web` (Vue + Vite + TypeScript) shows a product grid with search, a cart, and checkout. `catalog-api` (Hono on Bun, Postgres) serves products and creates orders, pricing them in integer cents and refusing to oversell. Products and orders are stored in Postgres: `catalog-api-migrator` runs the Prisma migrations and seeds the catalog once, and `catalog-api` starts after it. Stock sold stays sold across restarts.
 
 > **Requires TDK CLI 1.3.75 or newer** ([flisk#149](https://github.com/flisk-sh/flisk/pull/149) added Vue support). Older releases ignore `"framework": "vue"` and would generate React config for these files. Check with `tdk resource --help | grep -- --framework`.
 
@@ -33,6 +33,7 @@ tdk up store
 
 | Resource | Type | Stack | Port | URL |
 | --- | --- | --- | ---: | --- |
+| [`catalog-api-migrator`](services/store/catalog-api-migrator) | migrator (runs once) | `store` | 7300 | none |
 | [`catalog-api`](services/store/catalog-api) | Hono API | `store` | 4300 | http://api.tdk-ecommerce-example.localhost/api/catalog/api/products |
 | [`storefront-web`](services/store/storefront-web) | Vue 3 app | `store` | 3300 | http://app.tdk-ecommerce-example.localhost/storefront-web |
 
@@ -53,7 +54,8 @@ Resources live under `services/<stack>/<name>/` because that is where `discovery
 
 ## Where to look
 
-- [`catalog-api/src/index.ts`](services/store/catalog-api/src/index.ts): `GET /api/products?q=`, `GET /api/products/:id`, `POST /api/orders` (atomic stock check, 409 when short) and CORS, since the Vue app calls the API from its own origin.
+- [`catalog-api/src/app.ts`](services/store/catalog-api/src/app.ts): `GET /api/products?q=`, `GET /api/products/:id`, `POST /api/orders` (one transaction, rows locked, 409 when short) and CORS, since the Vue app calls the API from its own origin.
+- [`catalog-api-migrator/prisma/migrations`](services/store/catalog-api-migrator/prisma/migrations): the schema, applied by `prisma migrate deploy`. [`src/seed.ts`](services/store/catalog-api-migrator/src/seed.ts) is the starting catalog.
 - [`storefront-web/src/App.vue`](services/store/storefront-web/src/App.vue): the UI. [`cart.ts`](services/store/storefront-web/src/cart.ts) holds the cart rules and [`api.ts`](services/store/storefront-web/src/api.ts) the typed client, both unit tested.
 - `service.json` in each resource is the whole TDK contract. `storefront-web` declares `dependsOn: ["catalog-api"]`.
 
@@ -63,7 +65,9 @@ Resources live under `services/<stack>/<name>/` because that is where `discovery
 ## Test each resource
 
 ```bash
-cd services/store/catalog-api && bun install && bun run test
+# catalog-api runs against a real Postgres. flisk up provides DATABASE_URL; apply the migrations first:
+cd services/store/catalog-api-migrator && DATABASE_URL=postgres://... bun run migrate
+cd ../catalog-api && bun install && DATABASE_URL=postgres://... bun run test
 cd ../storefront-web && bun run test && bun run build
 ```
 

@@ -1,0 +1,13 @@
+{
+  "appName": "catalog-api-migrator",
+  "appType": "migrator",
+  "stack": "store",
+  "port": 7300,
+  "featuresEnabled": [
+    "prisma"
+  ],
+  "dependsOn": [
+    "postgres"
+  ],
+  "schemaVersion": 1
+}
