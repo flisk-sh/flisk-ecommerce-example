@@ -62,7 +62,7 @@ onMounted(load);
   <main class="page">
     <header class="top">
       <div>
-        <p class="eyebrow">Vue 3 + Hono on TDK</p>
+        <p class="eyebrow">Vue 3 + Hono on Flisk</p>
         <h1>Coffee Shop</h1>
       </div>
       <form class="search" @submit.prevent="load">

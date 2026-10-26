@@ -12,10 +12,10 @@ export interface Order {
   lines: Array<{ productId: string; quantity: number; name: string; unitPriceCents: number }>;
 }
 
-// TDK does not publish backend ports on localhost; Traefik routes catalog-api at
+// Flisk does not publish backend ports on localhost; Traefik routes catalog-api at
 // api.<project>.localhost/api/<name without -api>, with that prefix stripped.
 export const CATALOG_API_URL =
-  import.meta.env.VITE_CATALOG_API_URL ?? 'http://api.tdk-ecommerce-example.localhost/api/catalog';
+  import.meta.env.VITE_CATALOG_API_URL ?? 'http://api.flisk-ecommerce-example.localhost/api/catalog';
 
 type Fetch = typeof fetch;
 

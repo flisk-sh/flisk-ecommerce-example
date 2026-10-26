@@ -34,8 +34,8 @@ flisk up store
 | Resource | Type | Stack | Port | URL |
 | --- | --- | --- | ---: | --- |
 | [`catalog-api-migrator`](services/store/catalog-api-migrator) | migrator (runs once) | `store` | 7300 | none |
-| [`catalog-api`](services/store/catalog-api) | Hono API | `store` | 4300 | http://api.tdk-ecommerce-example.localhost/api/catalog/api/products |
-| [`storefront-web`](services/store/storefront-web) | Vue 3 app | `store` | 3300 | http://app.tdk-ecommerce-example.localhost/storefront-web |
+| [`catalog-api`](services/store/catalog-api) | Hono API | `store` | 4300 | http://api.flisk-ecommerce-example.localhost/api/catalog/api/products |
+| [`storefront-web`](services/store/storefront-web) | Vue 3 app | `store` | 3300 | http://app.flisk-ecommerce-example.localhost/storefront-web |
 
 Both go through Traefik; Flisk does not publish the container ports on `localhost`. `flisk networks` lists the `*.localhost` routes; `flisk down` stops everything.
 
