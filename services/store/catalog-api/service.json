@@ -1,14 +1,10 @@
 {
-  "appName": "catalog-api",
-  "appType": "backend",
-  "stack": "store",
-  "port": 4300,
-  "featuresEnabled": [
-    "prisma"
-  ],
-  "dependsOn": [
-    "catalog-api-migrator"
-  ],
-  "healthCheckPath": "/health",
-  "schemaVersion": 1
+	"appName": "catalog-api",
+	"appType": "backend",
+	"stack": "store",
+	"port": 4300,
+	"featuresEnabled": ["prisma"],
+	"dependsOn": ["catalog-api-migrator"],
+	"healthCheckPath": "/health",
+	"schemaVersion": 1
 }
