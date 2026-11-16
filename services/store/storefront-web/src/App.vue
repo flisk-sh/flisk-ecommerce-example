@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { createCatalogApi, type Order, type Product } from './api';
+import { computed, onMounted, ref } from "vue";
+import { createCatalogApi, type Order, type Product } from "./api";
 import {
-  addToCart,
-  cartCount,
-  cartTotalCents,
-  formatPrice,
-  removeFromCart,
-  toOrderLines,
-  type Cart,
-} from './cart';
-import './style.css';
+	addToCart,
+	type Cart,
+	cartCount,
+	cartTotalCents,
+	formatPrice,
+	removeFromCart,
+	toOrderLines,
+} from "./cart";
+import "./style.css";
 
 const api = createCatalogApi();
 const products = ref<Product[]>([]);
 const cart = ref<Cart>({});
-const query = ref('');
-const error = ref('');
+const query = ref("");
+const error = ref("");
 const loading = ref(true);
 const placing = ref(false);
 const receipt = ref<Order | null>(null);
@@ -24,35 +24,37 @@ const receipt = ref<Order | null>(null);
 const count = computed(() => cartCount(cart.value));
 const total = computed(() => cartTotalCents(cart.value, products.value));
 const cartLines = computed(() =>
-  products.value.filter((product) => cart.value[product.id]).map((product) => ({
-    product,
-    quantity: cart.value[product.id],
-  })),
+	products.value
+		.filter((product) => cart.value[product.id])
+		.map((product) => ({
+			product,
+			quantity: cart.value[product.id],
+		})),
 );
 
 async function load() {
-  try {
-    products.value = await api.products(query.value);
-    error.value = '';
-  } catch (e) {
-    error.value = `Cannot reach catalog-api: ${(e as Error).message}`;
-  } finally {
-    loading.value = false;
-  }
+	try {
+		products.value = await api.products(query.value);
+		error.value = "";
+	} catch (e) {
+		error.value = `Cannot reach catalog-api: ${(e as Error).message}`;
+	} finally {
+		loading.value = false;
+	}
 }
 
 async function checkout() {
-  placing.value = true;
-  try {
-    receipt.value = await api.checkout(toOrderLines(cart.value));
-    cart.value = {};
-    error.value = '';
-    await load(); // stock changed
-  } catch (e) {
-    error.value = (e as Error).message;
-  } finally {
-    placing.value = false;
-  }
+	placing.value = true;
+	try {
+		receipt.value = await api.checkout(toOrderLines(cart.value));
+		cart.value = {};
+		error.value = "";
+		await load(); // stock changed
+	} catch (e) {
+		error.value = (e as Error).message;
+	} finally {
+		placing.value = false;
+	}
 }
 
 onMounted(load);
