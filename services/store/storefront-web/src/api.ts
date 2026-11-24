@@ -36,16 +36,17 @@ export function createCatalogApi(
 	baseUrl = CATALOG_API_URL,
 	doFetch: Fetch = fetch,
 ) {
+	const apiBase = baseUrl.replace(/\/+$/, "");
 	return {
 		async products(query = ""): Promise<Product[]> {
 			const q = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : "";
-			return unwrap<Product[]>(await doFetch(`${baseUrl}/api/products${q}`));
+			return unwrap<Product[]>(await doFetch(`${apiBase}/api/products${q}`));
 		},
 		async checkout(
 			lines: Array<{ productId: string; quantity: number }>,
 		): Promise<Order> {
 			return unwrap<Order>(
-				await doFetch(`${baseUrl}/api/orders`, {
+				await doFetch(`${apiBase}/api/orders`, {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ lines }),
