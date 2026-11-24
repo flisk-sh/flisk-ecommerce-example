@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { createCatalogApi, type Order, type Product } from "./api";
 import {
 	addToCart,
@@ -14,6 +14,8 @@ import "./style.css";
 
 const api = createCatalogApi();
 const products = ref<Product[]>([]);
+// Search replaces the visible results, but the cart still needs the other products.
+const productsById = reactive(new Map<string, Product>());
 const cart = ref<Cart>({});
 const query = ref("");
 const error = ref("");
@@ -22,19 +24,22 @@ const placing = ref(false);
 const receipt = ref<Order | null>(null);
 
 const count = computed(() => cartCount(cart.value));
-const total = computed(() => cartTotalCents(cart.value, products.value));
+const cartProducts = computed(() =>
+	[...productsById.values()].filter((product) => cart.value[product.id]),
+);
+const total = computed(() => cartTotalCents(cart.value, cartProducts.value));
 const cartLines = computed(() =>
-	products.value
-		.filter((product) => cart.value[product.id])
-		.map((product) => ({
-			product,
-			quantity: cart.value[product.id],
-		})),
+	cartProducts.value.map((product) => ({
+		product,
+		quantity: cart.value[product.id],
+	})),
 );
 
 async function load() {
 	try {
-		products.value = await api.products(query.value);
+		const results = await api.products(query.value);
+		for (const product of results) productsById.set(product.id, product);
+		products.value = results;
 		error.value = "";
 	} catch (e) {
 		error.value = `Cannot reach catalog-api: ${(e as Error).message}`;
