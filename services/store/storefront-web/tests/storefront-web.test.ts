@@ -88,6 +88,27 @@ describe("catalog api client", () => {
 		});
 	});
 
+	it("keeps the routing prefix without doubling its trailing slash", async () => {
+		const doFetch = respond(200, { data: [] });
+		const api = createCatalogApi(
+			"http://api.test/api/catalog/",
+			doFetch as unknown as typeof fetch,
+		);
+
+		await api.products("tea");
+		await api.checkout([{ productId: "p_mug", quantity: 1 }]);
+
+		expect(doFetch).toHaveBeenNthCalledWith(
+			1,
+			"http://api.test/api/catalog/api/products?q=tea",
+		);
+		expect(doFetch).toHaveBeenNthCalledWith(
+			2,
+			"http://api.test/api/catalog/api/orders",
+			expect.objectContaining({ method: "POST" }),
+		);
+	});
+
 	it("surfaces the stock error from the API", async () => {
 		const api = createCatalogApi(
 			"http://api.test",
